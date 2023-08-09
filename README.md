@@ -6,7 +6,7 @@
 
 基于[element-ui](https://element.eleme.cn/#/zh-CN/component/tree)(License:MIT)中抽取的 tree 样式和功能，结合[vue-virtual-scroller](https://github.com/Akryum/vue-virtual-scroller)(License:MIT)所做的树组件。
 
-## v1.0 功能列表 [![npm](https://img.shields.io/npm/v/@fit2cloud/vue-virtual-tree.svg)](https://www.npmjs.com/package/@fit2cloud/vue-virtual-tree)
+## v1.0 功能列表 [![npm](https://img.shields.io/npm/v/@fit2cloud-ui/vue-virtual-tree.svg)](https://www.npmjs.com/package/@fit2cloud-ui/vue-virtual-tree)
 
 - 大数据量支持虚拟滚动（支持固定节点高度和动态节点高度）
 - 基本树形数据的展示
@@ -29,13 +29,13 @@
 ## 安装
 
 ```
-npm install @fit2cloud/vue-virtual-tree
+npm install @fit2cloud-ui/vue-virtual-tree
 ```
 
 或
 
 ```
-yarn add @fit2cloud/vue-virtual-tree
+yarn add @fit2cloud-ui/vue-virtual-tree
 ```
 
 ## 引入
@@ -46,9 +46,9 @@ yarn add @fit2cloud/vue-virtual-tree
 
 ```JS
 import Vue from "vue";
-import VueVirtualTree from "@fit2cloud/vue-virtual-tree";
+import VueVirtualTree from "@fit2cloud-ui/vue-virtual-tree";
 // 样式文件，可以根据需要自定义样式或主题
-import "@fit2cloud/vue-virtual-tree/src/assets/index.scss"
+import "@fit2cloud-ui/vue-virtual-tree/src/assets/index.scss"
 
 Vue.use(VueVirtualTree)
 ```
@@ -58,9 +58,9 @@ Vue.use(VueVirtualTree)
 在组件中引入：
 
 ```JS
-import VueVirtualTree from "@fit2cloud/vue-virtual-tree";
+import VueVirtualTree from "@fit2cloud-ui/vue-virtual-tree";
 // 样式文件，可以根据需要自定义样式或主题
-import "@fit2cloud/vue-virtual-tree/src/assets/index.scss"
+import "@fit2cloud-ui/vue-virtual-tree/src/assets/index.scss"
 
 export default {
   components: {
@@ -138,18 +138,18 @@ export default {
 $--color-primary: #ea5404;
 
 /* 改变 icon 字体路径变量，必需 */
-$--font-path: "~@fit2cloud/vue-virtual-tree/src/assets/fonts";
+$--font-path: "~@fit2cloud-ui/vue-virtual-tree/src/assets/fonts";
 
-@import "@fit2cloud/vue-virtual-tree/src/assets/index.scss";
+@import "@fit2cloud-ui/vue-virtual-tree/src/assets/index.scss";
 ```
 
-:warning: 需要注意的是，覆盖字体路径变量是必需的，将其赋值为 @fit2cloud/vue-virtual-tree 中 icon 图标所在的相对路径即可。
+:warning: 需要注意的是，覆盖字体路径变量是必需的，将其赋值为 @fit2cloud-ui/vue-virtual-tree 中 icon 图标所在的相对路径即可。
 
 然后在 `main.js` 中直接引入以上样式文件即可：
 
 ```JS
 import Vue from 'vue'
-import VueVirtualTree from "@fit2cloud/vue-virtual-tree";
+import VueVirtualTree from "@fit2cloud-ui/vue-virtual-tree";
 import "./css/ve-tree-var.scss"
 
 Vue.use(VueVirtualTree)

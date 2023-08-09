@@ -1,5 +1,5 @@
 {
-    "name": "@fit2cloud/vue-virtual-tree",
+    "name": "@fit2cloud-ui/vue-virtual-tree",
     "description": "基于Element-ui和vue-virtual-scroller实现的Vue2版本的虚拟树形组件，支持固定高度和动态高度两种模式",
     "version": "1.0.0",
     "author": "fit2cloud",
