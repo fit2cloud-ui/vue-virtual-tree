@@ -3,7 +3,7 @@
     class="el-tree"
     :class="{
       'el-tree--highlight-current': highlightCurrent,
-      'is-dragging': !!dragState.draggingNode,
+      'is-dragging': !!firstDraggingNode,
       'is-drop-not-allow': !dragState.allowDrop,
       'is-drop-inner': dragState.dropType === 'inner'
     }"
@@ -242,7 +242,9 @@ export default {
         dropNode: null,
         allowDrop: true
       },
-      treeNodeName: this.height ? "ElTreeVirtualNode" : "ElTreeNode"
+      treeNodeName: this.height ? "ElTreeVirtualNode" : "ElTreeNode",
+      firstDraggingNode: null, // 记录第一次拖拽的节点，因为虚拟滚动会导致列表渲染的节点数据发生变化，导致拖拽滚动后的节点数据不正确
+      isDragging: false // 是否正在拖拽中，当开始拖拽时置为 true，当拖拽结束释放节点后置为false。用于判定是否需要更新拖拽节点
     };
   },
 
@@ -549,8 +551,12 @@ export default {
       } catch (e) {
         console.log(e);
       }
-      dragState.draggingNode = treeNode;
-      this.$emit("node-drag-start", treeNode.node, event);
+      if (this.isDragging === false) {
+        dragState.draggingNode = treeNode;
+        this.firstDraggingNode = treeNode.node;
+        this.isDragging = true;
+      }
+      this.$emit("node-drag-start", this.firstDraggingNode, event);
     });
 
     this.$on("tree-node-drag-over", (event, treeNode) => {
@@ -562,7 +568,7 @@ export default {
       if (oldDropNode && oldDropNode !== dropNode) {
         removeClass(oldDropNode.$el, "is-drop-inner");
       }
-      const draggingNode = dragState.draggingNode;
+      const draggingNode = this.firstDraggingNode;
       if (!draggingNode || !dropNode) return;
 
       let dropPrev = true;
@@ -570,43 +576,38 @@ export default {
       let dropNext = true;
       let userAllowDropInner = true;
       if (typeof this.allowDrop === "function") {
-        dropPrev = this.allowDrop(draggingNode.node, dropNode.node, "prev");
+        dropPrev = this.allowDrop(draggingNode, dropNode.node, "prev");
         userAllowDropInner = dropInner = this.allowDrop(
-          draggingNode.node,
+          draggingNode,
           dropNode.node,
           "inner"
         );
-        dropNext = this.allowDrop(draggingNode.node, dropNode.node, "next");
+        dropNext = this.allowDrop(draggingNode, dropNode.node, "next");
       }
       event.dataTransfer.dropEffect = dropInner ? "move" : "none";
       if ((dropPrev || dropInner || dropNext) && oldDropNode !== dropNode) {
         if (oldDropNode) {
-          this.$emit(
-            "node-drag-leave",
-            draggingNode.node,
-            oldDropNode.node,
-            event
-          );
+          this.$emit("node-drag-leave", draggingNode, oldDropNode.node, event);
         }
-        this.$emit("node-drag-enter", draggingNode.node, dropNode.node, event);
+        this.$emit("node-drag-enter", draggingNode, dropNode.node, event);
       }
 
       if (dropPrev || dropInner || dropNext) {
         dragState.dropNode = dropNode;
       }
 
-      if (dropNode.node.nextSibling === draggingNode.node) {
+      if (dropNode.node.nextSibling === draggingNode) {
         dropNext = false;
       }
-      if (dropNode.node.previousSibling === draggingNode.node) {
+      if (dropNode.node.previousSibling === draggingNode) {
         dropPrev = false;
       }
-      if (dropNode.node.contains(draggingNode.node, false)) {
+      if (dropNode.node.contains(draggingNode, false)) {
         dropInner = false;
       }
       if (
-        draggingNode.node === dropNode.node ||
-        draggingNode.node.contains(dropNode.node)
+        draggingNode === dropNode.node ||
+        draggingNode.contains(dropNode.node)
       ) {
         dropPrev = false;
         dropInner = false;
@@ -665,18 +666,18 @@ export default {
         dropType === "before" || dropType === "after";
       dragState.allowDrop = dragState.showDropIndicator || userAllowDropInner;
       dragState.dropType = dropType;
-      this.$emit("node-drag-over", draggingNode.node, dropNode.node, event);
+      this.$emit("node-drag-over", draggingNode, dropNode.node, event);
     });
 
     this.$on("tree-node-drag-end", event => {
-      const { draggingNode, dropType, dropNode } = dragState;
+      const { dropType, dropNode } = dragState;
+      const draggingNode = this.firstDraggingNode;
       event.preventDefault();
       event.dataTransfer.dropEffect = "move";
-
       if (draggingNode && dropNode) {
-        const draggingNodeCopy = { data: draggingNode.node.data };
+        const draggingNodeCopy = { data: this.firstDraggingNode.data };
         if (dropType !== "none") {
-          draggingNode.node.remove();
+          draggingNode.remove();
         }
         if (dropType === "before") {
           dropNode.node.parent.insertBefore(draggingNodeCopy, dropNode.node);
@@ -693,29 +694,25 @@ export default {
 
         this.$emit(
           "node-drag-end",
-          draggingNode.node,
+          draggingNode,
           dropNode.node,
           dropType,
           event
         );
         if (dropType !== "none") {
-          this.$emit(
-            "node-drop",
-            draggingNode.node,
-            dropNode.node,
-            dropType,
-            event
-          );
+          this.$emit("node-drop", draggingNode, dropNode.node, dropType, event);
         }
       }
       if (draggingNode && !dropNode) {
-        this.$emit("node-drag-end", draggingNode.node, null, dropType, event);
+        this.$emit("node-drag-end", draggingNode, null, dropType, event);
       }
 
       dragState.showDropIndicator = false;
       dragState.draggingNode = null;
       dragState.dropNode = null;
       dragState.allowDrop = true;
+      this.firstDraggingNode = null;
+      this.isDragging = false;
     });
   },
 

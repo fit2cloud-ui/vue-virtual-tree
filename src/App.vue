@@ -5,11 +5,12 @@
       node-key="id"
       :data="treeData"
       :props="props"
-      :minItemSize="50"
+      :minItemSize="30"
       :sizeDependencies="['children']"
       height="500px"
       show-checkbox
       isDynamic
+      draggable
     >
       <div
         :style="{
