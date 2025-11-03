@@ -8,7 +8,7 @@
       'is-current': node.isCurrent,
       'is-hidden': !node.visible,
       'is-focusable': !node.disabled,
-      'is-checked': !node.disabled && node.checked,
+      'is-checked': !node.disabled && node.checked
     }"
     role="treeitem"
     tabindex="-1"
@@ -17,7 +17,7 @@
     :aria-checked="node.checked"
     :draggable="tree.draggable"
     @click.stop="handleClick"
-    @contextmenu="($event) => this.handleContextMenu($event)"
+    @contextmenu="$event => this.handleContextMenu($event)"
     @dragstart.stop="handleDragStart"
     @dragover.stop="handleDragOver"
     @dragend.stop="handleDragEnd"
@@ -27,18 +27,18 @@
       <span
         aria-hidden="true"
         :style="{
-          'min-width': (node.level - 1) * tree.indent + 'px',
+          'min-width': (node.level - 1) * tree.indent + 'px'
         }"
       ></span>
       <span
         :class="[
           {
             'is-leaf': node.isLeaf,
-            expanded: !node.isLeaf && expanded,
+            expanded: !node.isLeaf && expanded
           },
           'el-tree-node__expand-icon',
           'el-tree-node__expand-icon-no-transition',
-          tree.iconClass ? tree.iconClass : 'el-icon-caret-right',
+          tree.iconClass ? tree.iconClass : 'el-icon-caret-right'
         ]"
         @click.stop="handleExpandIconClick"
       ></span>

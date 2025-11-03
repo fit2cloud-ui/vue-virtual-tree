@@ -435,8 +435,8 @@ export default {
       this.store.remove(data);
     },
 
-    append(data, parentNode) {
-      this.store.append(data, parentNode);
+    append(data, parentNode, index) {
+      this.store.append(data, parentNode, index);
     },
 
     insertBefore(data, refNode) {
